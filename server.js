@@ -17,6 +17,30 @@ app.get('/', (req, res) => res.send('Vyapari AI Backend Running'));
 // Store routes
 app.use('/stores', storeRoutes);
 
+// WhatsApp webhook verification and message handler
+app.get('/whatsapp/webhook', (req, res) => {
+  const verify_token = process.env.WHATSAPP_VERIFY_TOKEN || 'vyapari_verify_token'; // use your token here
+
+  // Parse params from the webhook verification request
+  const mode = req.query['hub.mode'];
+  const token = req.query['hub.verify_token'];
+  const challenge = req.query['hub.challenge'];
+
+  // Check if token and mode are present
+  if (mode && token) {
+    if (mode === 'subscribe' && token === verify_token) {
+      // Respond with the challenge token from the request
+      console.log('WEBHOOK_VERIFIED');
+      res.status(200).send(challenge);
+    } else {
+      // Respond with '403 Forbidden' if verify tokens do not match
+      res.sendStatus(403);
+    }
+  } else {
+    res.sendStatus(400);
+  }
+});
+
 // WhatsApp webhook placeholder
 app.post('/whatsapp/webhook', (req, res) => {
   // TODO: Handle WhatsApp messages and AI logic here
