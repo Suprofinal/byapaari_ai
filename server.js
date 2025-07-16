@@ -23,6 +23,7 @@ app.post('/whatsapp/webhook', (req, res) => {
   res.sendStatus(200);
 });
 
+console.log('process.env.MONGODB_URI:', process.env.MONGODB_URI);
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
